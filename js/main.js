@@ -335,6 +335,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 { src: 'img/kosan/12.png', alt: 'Monitoring Pembayaran' },
                 { src: 'img/kosan/13.png', alt: 'Monitoring Pembayaran' },
             ]
+        },
+        project6: {
+            title: 'Kasir Virtual Resto HJ Nuridah',
+            images: [
+                { src: 'img/dapur/d1.png', alt: 'Halaman Utama Menu' },
+                { src: 'img/dapur/d2.png', alt: 'Kategori Menu' },
+                { src: 'img/dapur/d3.png', alt: 'Detail Produk' },
+                { src: 'img/dapur/d4.png', alt: 'Keranjang Belanja' },
+                { src: 'img/dapur/d5.png', alt: 'Proses Checkout' },
+                { src: 'img/dapur/d6.png', alt: 'Pembayaran Digital' },
+            ]
         }
     };
 
