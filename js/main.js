@@ -387,7 +387,13 @@ document.addEventListener('DOMContentLoaded', () => {
         project7: {
             title: 'Ruby Messenger',
             images: [
-                { src: 'img/img.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' }
+                { src: 'img/chat/1.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/2.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/3.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/4.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/5.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/6.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
+                { src: 'img/chat/7.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' },
             ]
         }
     };
