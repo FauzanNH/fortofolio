@@ -55,13 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inisialisasi Particles.js untuk hero section
     if (document.getElementById('particles-js')) {
+        const isMobile = window.innerWidth <= 768;
         particlesJS('particles-js', {
             "particles": {
                 "number": {
-                    "value": 80,
+                    "value": isMobile ? 40 : 80,
                     "density": {
                         "enable": true,
-                        "value_area": 800
+                        "value_area": isMobile ? 400 : 800
                     }
                 },
                 "color": {
@@ -382,6 +383,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     { src: 'img/dapur/admin/a6.png', alt: 'Admin - antrian pesanan masuk' },
                 ]
             }
+        },
+        project7: {
+            title: 'Ruby Messenger',
+            images: [
+                { src: 'img/img.jpg', alt: 'Ruby Messenger - Tampilan awal (placeholder)' }
+            ]
         }
     };
 
@@ -591,6 +598,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Event listener untuk tombol "Lihat Foto" pada card (di samping tombol Demo)
+    const openGalleryBtns = document.querySelectorAll('.open-gallery-btn');
+    openGalleryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const projectId = btn.getAttribute('data-project');
+            openGallery(projectId);
+        });
+    });
+
     // Event listener untuk tombol tutup galeri
     galleryClose.addEventListener('click', () => {
         galleryModal.classList.remove('active');
@@ -719,5 +735,164 @@ document.addEventListener('DOMContentLoaded', () => {
     // Tambahkan delay untuk animasi elemen berurutan
     document.querySelectorAll('.skill-item, .project-card').forEach((el, i) => {
         el.style.setProperty('--i', i % 4);
+    });
+
+    // Tambahkan delay untuk animasi navigasi mobile
+    document.querySelectorAll('.nav-links li').forEach((el, i) => {
+        el.style.setProperty('--i', i);
+    });
+
+    // Touch gestures untuk galeri mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    function handleGallerySwipe() {
+        const deltaX = touchEndX - touchStartX;
+        const deltaY = touchEndY - touchStartY;
+        
+        // Pastikan swipe horizontal lebih dominan daripada vertikal
+        if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+            if (deltaX > 0) {
+                // Swipe right - gambar sebelumnya
+                showImage(currentIndex - 1);
+            } else {
+                // Swipe left - gambar selanjutnya
+                showImage(currentIndex + 1);
+            }
+        }
+    }
+
+    // Event listeners untuk touch gestures pada galeri
+    if (galleryMain) {
+        galleryMain.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        galleryMain.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
+            if (galleryModal.classList.contains('active')) {
+                handleGallerySwipe();
+            }
+        }, { passive: true });
+    }
+
+    // Improved mobile navigation
+    function handleMobileNavigation() {
+        const isMobile = window.innerWidth <= 768;
+        
+        if (isMobile) {
+            // Tutup menu saat mengklik link
+            document.querySelectorAll('.nav-links a').forEach((link, index) => {
+                // Remove existing event listeners to prevent duplicates
+                link.removeEventListener('click', link.mobileClickHandler);
+                
+                link.mobileClickHandler = () => {
+                    if (navLinks.classList.contains('active')) {
+                        // Add slight delay for better UX
+                        setTimeout(() => {
+                            toggleNav();
+                        }, 100);
+                    }
+                };
+                
+                link.addEventListener('click', link.mobileClickHandler);
+            });
+
+            // Tutup menu saat mengklik overlay
+            document.addEventListener('click', (e) => {
+                if (navLinks.classList.contains('active') && 
+                    !navLinks.contains(e.target) && 
+                    !burger.contains(e.target)) {
+                    toggleNav();
+                }
+            });
+            
+            // Prevent body scroll when menu is open
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'class') {
+                        if (navLinks.classList.contains('active')) {
+                            document.body.style.overflow = 'hidden';
+                        } else {
+                            document.body.style.overflow = '';
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(navLinks, { attributes: true });
+        }
+    }
+
+    // Panggil fungsi mobile navigation
+    handleMobileNavigation();
+
+    // Responsive handling saat resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
+            // Tutup menu mobile jika resize ke desktop
+            if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
+                toggleNav();
+            }
+            
+            // Re-initialize mobile navigation
+            handleMobileNavigation();
+            
+            // Adjust particles untuk mobile
+            if (window.pJSDom && window.pJSDom[0]) {
+                const isMobile = window.innerWidth <= 768;
+                window.pJSDom[0].pJS.particles.number.value = isMobile ? 40 : 80;
+                window.pJSDom[0].pJS.fn.particlesRefresh();
+            }
+        }, 250);
+    });
+
+    // Prevent zoom on double tap untuk iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (event) => {
+        const now = (new Date()).getTime();
+        if (now - lastTouchEnd <= 300) {
+            event.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+
+    // Smooth scroll behavior untuk mobile
+    function smoothScrollToSection(target) {
+        const element = document.querySelector(target);
+        if (element) {
+            const headerHeight = document.querySelector('header').offsetHeight;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 20;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    // Update smooth scroll untuk link navigasi
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.removeEventListener('click', anchor.clickHandler); // Remove existing listener
+        anchor.clickHandler = function (e) {
+            e.preventDefault();
+            
+            // Tutup menu mobile jika terbuka
+            if (navLinks.classList.contains('active')) {
+                toggleNav();
+            }
+
+            // Smooth scroll ke elemen target
+            const target = this.getAttribute('href');
+            smoothScrollToSection(target);
+        };
+        anchor.addEventListener('click', anchor.clickHandler);
     });
 });
